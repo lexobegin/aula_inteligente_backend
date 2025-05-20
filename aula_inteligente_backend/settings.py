@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-^rf$xs&z*ujw(3a!es+p4+7n*7(!18+^bog64uwj_u_&6@-n)!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+#No recomendado para produccion ['*'] //[]
+ALLOWED_HOSTS = ['localhost:4200','localhost', '127.0.0.1', '0.0.0.0', '192.168.0.6']
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+]
 
 
 # Application definition
@@ -39,11 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'core',
+    'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -114,7 +121,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+#LANGUAGE_CODE = 'en-us'
+
+LANGUAGES = [
+    ('es', 'Spanish'),
+]
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'UTC'
 
@@ -146,4 +158,12 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),        # El token de acceso durará 7 días
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=10),      # El token de refresco durará 10 días
+    'AUTH_HEADER_TYPES': ('Bearer',),                  # Usa "Bearer <token>" en los headers
 }
