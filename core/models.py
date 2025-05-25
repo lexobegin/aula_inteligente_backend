@@ -292,7 +292,7 @@ class Horario(models.Model):
 
 class Inscripcion(models.Model):
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
-    gestiongrado = models.ForeignKey(GestionGrado, on_delete=models.CASCADE)
+    gestiongrado = models.ForeignKey(GestionGrado, on_delete=models.CASCADE, null=True, blank=True)
     fecha_inscripcion = models.DateField(auto_now_add=True)
     estado = models.CharField(max_length=20, default='ACTIVA')
 
@@ -301,8 +301,8 @@ class Inscripcion(models.Model):
 
 class Nota(models.Model):
     inscripcion = models.ForeignKey(Inscripcion, on_delete=models.CASCADE)
-    gestionperiodo = models.ForeignKey(GestionPeriodo, on_delete=models.CASCADE)
-    materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
+    gestionperiodo = models.ForeignKey(GestionPeriodo, on_delete=models.CASCADE, null=True, blank=True)
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE, null=True, blank=True)
     tipo_evaluacion = models.CharField(max_length=100)
     valor = models.DecimalField(max_digits=5, decimal_places=2)
     fecha_registro = models.DateField(auto_now_add=True)

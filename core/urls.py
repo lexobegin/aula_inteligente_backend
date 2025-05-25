@@ -49,4 +49,6 @@ urlpatterns = [
     # Registro y perfil
     path('register/', RegistroUsuarioView.as_view(), name='registro_usuario'),
     path('auth/me/', usuario_actual, name='usuario-actual'),
+
+    path('prediccion-rendimiento/', PrediccionRendimientoAPIView.as_view(), name='prediccion-rendimiento'),
 ]

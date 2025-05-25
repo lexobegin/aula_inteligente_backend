@@ -1,14 +1,19 @@
 #from django.shortcuts import render
 
 # core/views.py
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 
 from .models import *
 from .serializers import *
+
+from core.utils.ml.ml_model import predecir_rendimiento
 
 Usuario = get_user_model()
 
@@ -125,3 +130,21 @@ class PrediccionViewSet(viewsets.ModelViewSet):
     queryset = PrediccionRendimiento.objects.all()
     serializer_class = PrediccionRendimientoSerializer
     permission_classes = [IsAuthenticated]
+
+class PrediccionRendimientoAPIView(APIView):
+    def post(self, request):
+        data = request.data
+
+        try:
+            promedio_notas = float(data.get("promedio_notas"))
+            asistencia = float(data.get("asistencia"))
+            participacion = float(data.get("participacion"))
+        except (TypeError, ValueError):
+            return Response({"error": "Datos inválidos."}, status=status.HTTP_400_BAD_REQUEST)
+
+        prediccion, clasificacion = predecir_rendimiento(promedio_notas, asistencia, participacion)
+
+        return Response({
+            "prediccion": round(prediccion, 2),
+            "clasificacion": clasificacion
+        }, status=status.HTTP_200_OK)

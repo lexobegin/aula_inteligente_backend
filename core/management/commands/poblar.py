@@ -452,7 +452,7 @@ class Command(BaseCommand):
                 hora_inicio, hora_fin = random.choice(HORAS)
 
                 clave_aula = (aula.id, dia, hora_inicio, hora_fin)
-                clave_profesor = (profesor.id, dia, hora_inicio, hora_fin)
+                clave_profesor = (profesor.pk, dia, hora_inicio, hora_fin)
 
                 if clave_aula not in usados and clave_profesor not in usados:
                     Horario.objects.create(
@@ -476,7 +476,9 @@ class Command(BaseCommand):
         # Poblando inscripciones para la gestión 2025
         self.stdout.write("Poblando inscripciones para la gestión 2025...")
 
-        gestion_2025 = Gestion.objects.filter(anio=2025).first()
+        ##gestion_2025 = Gestion.objects.filter(anio=2025).first()
+        gestion_2025 = Gestion.objects.filter(fecha_inicio__year=2025).first()
+
         if not gestion_2025:
             self.stdout.write("Gestión 2025 no encontrada. Abortando inscripción.")
             return
@@ -574,8 +576,8 @@ class Command(BaseCommand):
         self.stdout.write("Generando notas para el 1er Trimestre de la gestión 2025...")
 
         # Obtener gestión 2025 y su 1er Trimestre
-        gestion_2025 = Gestion.objects.get(anio=2025)
-        primer_trimestre = GestionPeriodo.objects.get(gestion=gestion_2025, nombre__icontains="1er Trimestre")
+        gestion_2025 = Gestion.objects.get(fecha_inicio__year=2025)
+        primer_trimestre = GestionPeriodo.objects.get(gestion=gestion_2025, periodo__nombre__icontains="Primer Trimestre")
 
         # Obtener inscripciones de la gestión 2025
         inscripciones = Inscripcion.objects.filter(gestiongrado__gestion=gestion_2025)
@@ -587,7 +589,7 @@ class Command(BaseCommand):
 
         for inscripcion in inscripciones:
             grado = inscripcion.gestiongrado.grado
-            materias = GestionGradoMateria.objects.filter(grado=grado, gestion=gestion_2025).select_related('materia')
+            materias = GestionGradoMateria.objects.filter(gestiongrado__grado=grado, gestiongrado__gestion=gestion_2025).select_related('materia')
 
             for ggm in materias:
                 for tipo in tipos_evaluacion:
@@ -622,7 +624,8 @@ class Command(BaseCommand):
             fecha_actual += timedelta(days=1)
 
         # Obtener todas las inscripciones activas de 2025
-        inscripciones = Inscripcion.objects.filter(gestiongrado__gestion__anio=2025, estado='ACTIVA')
+        gestion_2025 = Gestion.objects.get(fecha_inicio__year=2025)
+        inscripciones = Inscripcion.objects.filter(gestiongrado__gestion=gestion_2025, estado='ACTIVA')
 
         # Estados posibles
         estados = ['PRESENTE', 'AUSENTE', 'TARDE']
@@ -669,7 +672,8 @@ class Command(BaseCommand):
         tipos_participacion = ['ORAL', 'PROYECTO', 'GRUPAL', 'INDIVIDUAL']
 
         # Inscripciones activas en la gestión 2025
-        inscripciones = Inscripcion.objects.filter(gestiongrado__gestion__anio=2025, estado='ACTIVA')
+        gestion_2025 = Gestion.objects.get(fecha_inicio__year=2025)
+        inscripciones = Inscripcion.objects.filter(gestiongrado__gestion=gestion_2025, estado='ACTIVA')
 
         total = 0
 
@@ -702,7 +706,8 @@ class Command(BaseCommand):
 
         #Prediccion Rendimiento
         # Obtener todas las inscripciones de la gestión 2025
-        inscripciones_2025 = list(Inscripcion.objects.filter(gestiongrado__gestion__anio=2025))
+        gestion_2025 = Gestion.objects.get(fecha_inicio__year=2025)
+        inscripciones_2025 = list(Inscripcion.objects.filter(gestiongrado__gestion=gestion_2025))
 
         # Seleccionar 50 al azar (si hay al menos 50)
         inscripciones_aleatorias = sample(inscripciones_2025, min(len(inscripciones_2025), 50))
