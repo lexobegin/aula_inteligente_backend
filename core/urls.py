@@ -11,6 +11,9 @@ from rest_framework_simplejwt.views import (
 router = routers.DefaultRouter()
 
 # Usuarios
+router.register(r'usuarios', UsuarioViewSet)
+#router.register(r'usuarios', UsuarioViewSet, basename='usuario')  # más explícito
+
 router.register(r'administradores', AdministradorViewSet)
 router.register(r'profesores', ProfesorViewSet)
 router.register(r'alumnos', AlumnoViewSet)
@@ -49,6 +52,9 @@ urlpatterns = [
     # Registro y perfil
     path('register/', RegistroUsuarioView.as_view(), name='registro_usuario'),
     path('auth/me/', usuario_actual, name='usuario-actual'),
+
+    #Horario de Alumno
+    path('mi-horario/', HorarioAlumnoView.as_view(), name='mi-horario'),
 
     path('prediccion-rendimiento/', PrediccionRendimientoAPIView.as_view(), name='prediccion-rendimiento'),
 ]

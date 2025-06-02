@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-^rf$xs&z*ujw(3a!es+p4+7n*7(!18+^bog64uwj_u_&6@-n)!
 DEBUG = True
 
 #No recomendado para produccion ['*'] //[]
-ALLOWED_HOSTS = ['localhost:4200','localhost', '127.0.0.1', '0.0.0.0', '192.168.0.6']
+ALLOWED_HOSTS = ['localhost:4200','localhost', '127.0.0.1', '0.0.0.0', '192.168.0.6', '192.168.0.4']
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
 ]
@@ -86,8 +86,8 @@ DATABASES = {
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'aulainteligente_db',
-        #'NAME': 'aulaia_db',
+        #'NAME': 'aulainteligente_db',
+        'NAME': 'aulaia_db',
         'USER': 'postgres',
         'PASSWORD': '12345',
         'HOST': 'localhost',
