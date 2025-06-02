@@ -146,11 +146,45 @@ class HorarioSerializer(serializers.ModelSerializer):
         model = Horario
         fields = '__all__'
 
+class HorarioAlumnoSerializer(serializers.ModelSerializer):
+    materia = serializers.CharField(source='gestiongradomateria.materia.nombre')
+    aula = serializers.SerializerMethodField()
+    profesor = serializers.SerializerMethodField()
+    dia = serializers.CharField()
+    hora_inicio = serializers.TimeField(format='%H:%M')
+    hora_fin = serializers.TimeField(format='%H:%M')
+
+    class Meta:
+        model = Horario
+        fields = ['materia', 'dia', 'hora_inicio', 'hora_fin', 'aula', 'profesor']
+
+    def get_aula(self, obj):
+        return f"{obj.aula.codigo} - Piso {obj.aula.piso} ({obj.aula.edificio})"
+
+    def get_profesor(self, obj):
+        return obj.profesor.usuario.get_full_name()
+
 # Inscripción
 class InscripcionSerializer(serializers.ModelSerializer):
+    materias = serializers.SerializerMethodField()
+
     class Meta:
         model = Inscripcion
-        fields = '__all__'
+        fields = ['id', 'fecha_inscripcion', 'estado', 'alumno', 'gestiongrado', 'materias']
+
+    def get_materias(self, obj):
+        materias = Materia.objects.filter(
+            gestiongradomateria__gestiongrado=obj.gestiongrado
+        ).distinct()
+        return [
+            {
+                "id": materia.id,
+                "nombre": materia.nombre,
+                "nivel": materia.nivel,
+                "descripcion": materia.descripcion
+            }
+            for materia in materias
+        ]
 
 # Nota
 class NotaSerializer(serializers.ModelSerializer):
